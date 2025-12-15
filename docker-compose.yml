@@ -1,0 +1,35 @@
+version: "3.9"
+
+services:
+  mongo:
+    image: mongo:7
+    container_name: pump-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+  pump-auth-service:
+    image: pump-auth-service
+    ports:
+      - "8080:8080"
+    environment:
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRATION: ${JWT_EXPIRATION}
+      SPRING_DATA_MONGODB_URI: mongodb://mongo:27017/pump_auth_db
+    depends_on:
+      - mongo
+
+  pump:
+    image: pump
+    ports:
+      - "8081:8080"
+    environment:
+      JWT_SECRET: ${JWT_SECRET}
+      SPRING_DATA_MONGODB_URI: mongodb://mongo:27017/pump_db
+    depends_on:
+      - mongo
+      - pump-auth-service
+
+volumes:
+  mongo-data:
