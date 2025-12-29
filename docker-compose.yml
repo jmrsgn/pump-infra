@@ -40,7 +40,7 @@ services:
       mongo:
         condition: service_healthy
       pump-auth-service:
-        condition: service_started
+        condition: service_healthy
 
 volumes:
   mongo-data:
