@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pump-auth-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pump-auth-service
+  template:
+    metadata:
+      labels:
+        app: pump-auth-service
+    spec:
+      containers:
+        - name: pump-auth-service
+          image: pump-auth-service:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: k8s
+            - name: SPRING_DATA_MONGODB_URI
+              value: mongodb://pump-mongo:27017/pump_auth_db
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: pump-secrets
+                  key: JWT_SECRET
+            - name: JWT_EXPIRATION
+              valueFrom:
+                secretKeyRef:
+                  name: pump-secrets
+                  key: JWT_EXPIRATION
+
+          startupProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            failureThreshold: 30
+            periodSeconds: 5
+
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 5
+
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"

@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: pump-auth-service
+spec:
+  selector:
+    app: pump-auth-service
+  ports:
+    - port: 8080
+      targetPort: 8080
+
+
+# internal DNS name http://pump-auth-service:8080
