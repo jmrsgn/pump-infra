@@ -14,8 +14,8 @@ spec:
     spec:
       containers:
         - name: pump
-          image: pump:latest
-          imagePullPolicy: IfNotPresent
+          image: ghcr.io/jmrsgn/pump:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 8080
 

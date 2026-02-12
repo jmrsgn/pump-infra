@@ -14,8 +14,8 @@ spec:
     spec:
       containers:
         - name: pump-auth-service
-          image: pump-auth-service:latest
-          imagePullPolicy: IfNotPresent
+          image: ghcr.io/jmrsgn/pump-auth-service:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 8080
 
