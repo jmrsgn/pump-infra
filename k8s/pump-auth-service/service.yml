@@ -9,5 +9,4 @@ spec:
     - port: 8080
       targetPort: 8080
 
-
 # internal DNS name http://pump-auth-service:8080

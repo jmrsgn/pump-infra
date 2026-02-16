@@ -15,13 +15,13 @@ echo "=============================================="
 kubectl apply -f mongo
 
 echo "=============================================="
-echo "Applying pump-auth service"
+echo "Applying Pump Auth service"
 echo "=============================================="
 kubectl apply -f pump-auth-service
 
 echo "=============================================="
-echo "Applying pump service"
-kubectl apply -f pump
+echo "Applying Pump Social service"
+kubectl apply -f pump-social-service
 echo "=============================================="
 
 echo "All resources applied successfully!"

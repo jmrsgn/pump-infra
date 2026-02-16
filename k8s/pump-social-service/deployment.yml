@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: pump
+  name: pump-social-service
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: pump
+      app: pump-social-service
   template:
     metadata:
       labels:
-        app: pump
+        app: pump-social-service
     spec:
       containers:
-        - name: pump
-          image: ghcr.io/jmrsgn/pump:latest
+        - name: pump-social-service
+          image: ghcr.io/jmrsgn/pump-social-service:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
@@ -24,7 +24,7 @@ spec:
               value: k8s
 
             - name: SPRING_DATA_MONGODB_URI
-              value: mongodb://pump-mongo:27017/pump_db
+              value: mongodb://pump-mongo:27017/pump_social_db
 
             - name: JWT_SECRET
               valueFrom:

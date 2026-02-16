@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: pump-social-service
+spec:
+  selector:
+    app: pump-social-service
+  ports:
+    - port: 8080
+      targetPort: 8080
+
+# internal DNS name http://pump-social-service:8080

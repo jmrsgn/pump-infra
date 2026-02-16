@@ -12,7 +12,7 @@ cd "$ROOT_DIR/../pump-auth-service"
 echo "=============================================="
 echo "Building Pump Service JAR"
 echo "=============================================="
-cd "$ROOT_DIR/../pump"
+cd "$ROOT_DIR/../pump-social-service"
 ./mvnw clean package -DskipTests
 
 echo "=============================================="

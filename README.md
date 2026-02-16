@@ -8,7 +8,7 @@ If this is your first time running the project (or you want full control):
 1.  **Build the service images**
 
 ```bash
-docker build -t pump ../pump
+docker build -t pump-social-service ../pump-social-service
 docker build -t pump-auth-service ../pump-auth-service
   ```
 
@@ -49,6 +49,6 @@ This script:
 - Logs are your best friend:
 
 	```bash
-	docker compose logs -f pump
+	docker compose logs -f pump-social-service
 	docker compose logs -f pump-auth-service
 	```
