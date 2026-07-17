@@ -3,7 +3,7 @@ services:
     image: mongo:7
     container_name: pump-mongo
     ports:
-      - "27017:27017"
+      - "${MONGO_PORT}:27017"
     volumes:
       - mongo-data:/data/db
     healthcheck:
@@ -12,35 +12,73 @@ services:
       timeout: 5s
       retries: 5
 
+  postgres:
+    image: postgres:17
+    container_name: pump-postgres
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   pump-auth-service:
     build: ../pump-auth-service
     image: pump-auth-service
     ports:
-      - "${AUTH_PORT}:8080"
+      - "${AUTH_SERVICE_PORT}:8080"
     environment:
       JWT_SECRET: ${JWT_SECRET}
       JWT_EXPIRATION: ${JWT_EXPIRATION}
-      SPRING_DATA_MONGODB_URI: mongodb://mongo:27017/pump_auth_db
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/pump_auth_db
       SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+      PUMP_INTERNAL_SERVICE_TOKEN: ${PUMP_INTERNAL_SERVICE_TOKEN}
     depends_on:
-      mongo:
+      postgres:
         condition: service_healthy
 
-  pump:
+  pump-social-service:
     build: ../pump-social-service
     image: pump-social-service
     ports:
-      - "${PUMP_PORT}:8080"
+      - "${SOCIAL_SERVICE_PORT}:8080"
     environment:
       JWT_SECRET: ${JWT_SECRET}
       JWT_EXPIRATION: ${JWT_EXPIRATION}
       SPRING_DATA_MONGODB_URI: mongodb://mongo:27017/pump_social_db
       SPRING_PROFILES_ACTIVE: docker
+      PUMP_INTERNAL_SERVICE_TOKEN: ${PUMP_INTERNAL_SERVICE_TOKEN}
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
     depends_on:
       mongo:
         condition: service_healthy
-      pump-auth-service:
+
+  pump-coaching-service:
+    build: ../pump-coaching-service
+    image: pump-coaching-service
+    ports:
+      - "${COACHING_SERVICE_PORT}:8080"
+    environment:
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRATION: ${JWT_EXPIRATION}
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/pump_coaching_db
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+      PUMP_INTERNAL_SERVICE_TOKEN: ${PUMP_INTERNAL_SERVICE_TOKEN}
+    depends_on:
+      postgres:
         condition: service_healthy
 
 volumes:
   mongo-data:
+  postgres-data:
