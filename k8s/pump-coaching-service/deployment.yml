@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: pump-social-service
+  name: pump-coaching-service
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: pump-social-service
+      app: pump-coaching-service
   template:
     metadata:
       labels:
-        app: pump-social-service
+        app: pump-coaching-service
     spec:
       containers:
-        - name: pump-social-service
-          image: ghcr.io/jmrsgn/pump-social-service:latest
+        - name: pump-coaching-service
+          image: ghcr.io/jmrsgn/pump-coaching-service:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
@@ -24,8 +24,20 @@ spec:
               value: k8s
 
             # DB
-            - name: SPRING_DATA_MONGODB_URI
-              value: mongodb://pump-mongo:27017/pump_social_db
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:postgresql://pump-postgres:5432/pump_coaching_db
+
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: pump-secrets
+                  key: POSTGRES_USER
+
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: pump-secrets
+                  key: POSTGRES_PASSWORD
 
             - name: JWT_SECRET
               valueFrom:
@@ -45,15 +57,9 @@ spec:
                   name: pump-secrets
                   key: PUMP_INTERNAL_SERVICE_TOKEN
 
-            - name: OPENAI_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: pump-secrets
-                  key: OPENAI_API_KEY
-
             # EXTERNAL URLS
-            - name: AUTH_BASE_URL
-              value: http://pump-auth-service:8080
+            - name: SOCIAL_BASE_URL
+              value: http://pump-social-service:8080
 
           startupProbe:
             httpGet:

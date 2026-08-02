@@ -26,3 +26,14 @@ spec:
                 name: pump-auth-service
                 port:
                   number: 8080
+
+    - host: coaching.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: pump-coaching-service
+                port:
+                  number: 8080

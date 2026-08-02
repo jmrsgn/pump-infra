@@ -8,5 +8,4 @@ spec:
   ports:
     - port: 27017
       targetPort: 27017
-
-# internal DNS name mongodb://pump-mongo:27017
+  type: ClusterIP

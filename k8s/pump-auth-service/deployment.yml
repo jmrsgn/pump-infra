@@ -22,18 +22,56 @@ spec:
           env:
             - name: SPRING_PROFILES_ACTIVE
               value: k8s
-            - name: SPRING_DATA_MONGODB_URI
-              value: mongodb://pump-mongo:27017/pump_auth_db
+
+            # DB 
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:postgresql://pump-postgres:5432/pump_auth_db
+
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: pump-secrets
+                  key: POSTGRES_USER
+
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: pump-secrets
+                  key: POSTGRES_PASSWORD
+
             - name: JWT_SECRET
               valueFrom:
                 secretKeyRef:
                   name: pump-secrets
                   key: JWT_SECRET
+
             - name: JWT_EXPIRATION
               valueFrom:
                 secretKeyRef:
                   name: pump-secrets
                   key: JWT_EXPIRATION
+
+            - name: PUMP_INTERNAL_SERVICE_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: pump-secrets
+                  key: PUMP_INTERNAL_SERVICE_TOKEN
+
+            - name: EMAIL_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: pump-secrets
+                  key: EMAIL_USERNAME
+
+            - name: EMAIL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: pump-secrets
+                  key: EMAIL_PASSWORD
+
+            # EXTERNAL URLS 
+            - name: SOCIAL_BASE_URL
+              value: http://pump-social-service:8080
 
           startupProbe:
             httpGet:
