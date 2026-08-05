@@ -15,7 +15,9 @@ kubectl apply -f mongo
 echo "=============================================="
 echo "Applying PostgreSQL resources"
 echo "=============================================="
+kubectl apply -f postgres/configmap.yml
 kubectl apply -f postgres
+kubectl rollout status deployment/pump-postgres
 
 echo "=============================================="
 echo "Applying Pump Auth Service"

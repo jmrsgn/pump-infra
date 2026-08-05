@@ -29,3 +29,13 @@ spec:
                 secretKeyRef:
                   name: pump-secrets
                   key: POSTGRES_PASSWORD
+
+          volumeMounts:
+            - name: postgres-init
+              mountPath: /docker-entrypoint-initdb.d/init.sql
+              subPath: init.sql
+
+      volumes:
+        - name: postgres-init
+          configMap:
+            name: postgres-init-script
